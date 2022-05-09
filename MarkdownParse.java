@@ -11,25 +11,38 @@ public class MarkdownParse {
         ArrayList<String> toReturn = new ArrayList<>();
         // find the next [, then find the ], then find the (, then read link upto next )
         int currentIndex = 0;
+        String image = "!"; 
+        boolean link = true;
+        String current;
         while(currentIndex < markdown.length()) {
-            System.out.println(currentIndex);
             int openBracket = markdown.indexOf("[", currentIndex);
-            if (openBracket == -1) {
+            if (openBracket == -1){ 
                 break;
             }
             int closeBracket = markdown.indexOf("]", openBracket);
+            if (closeBracket == openBracket + 1){
+                link = false;
+            }
             int openParen = markdown.indexOf("(", closeBracket);
-            if (openParen == -1) {
-                break;
+            if (openParen != closeBracket + 1 || openParen == -1){//check link format
+                link = false;
             }
             int closeParen = markdown.indexOf(")", openParen);
-            if (!markdown.substring(openBracket-1,openBracket).equals("!")) {
-                toReturn.add(markdown.substring(openParen + 1, closeParen));
+            if (openBracket - 1 != -1 && markdown.substring(openBracket - 1, openBracket).equals(image)){//check image
+                link = false;
             }
-            currentIndex = closeParen + 1;
-        
-        }
-        System.out.println(currentIndex);
+            if(link){
+                current = markdown.substring(openParen + 1, closeParen);
+                if (current.indexOf(" ") == -1){// checking if link is with spaces
+                    toReturn.add(markdown.substring(openParen + 1, closeParen));
+                }
+                currentIndex = closeParen + 1;
+            }
+            else{
+                currentIndex++;
+            }
+            link = true;           
+        }    
         return toReturn;
     }
 
