@@ -12,7 +12,7 @@ public class MarkdownParse {
         // find the next [, then find the ], then find the (, then read link upto next )
         int currentIndex = 0;
         String image = "!"; 
-        boolean link = true;
+        boolean isLink = true;
         String current;
         while(currentIndex < markdown.length()) {
             int openBracket = markdown.indexOf("[", currentIndex);
@@ -21,17 +21,17 @@ public class MarkdownParse {
             }
             int closeBracket = markdown.indexOf("]", openBracket);
             if (closeBracket == openBracket + 1){
-                link = false;
+                isLink = false;
             }
             int openParen = markdown.indexOf("(", closeBracket);
             if (openParen != closeBracket + 1 || openParen == -1){//check link format
-                link = false;
+                isLink = false;
             }
             int closeParen = markdown.indexOf(")", openParen);
             if (openBracket - 1 != -1 && markdown.substring(openBracket - 1, openBracket).equals(image)){//check image
-                link = false;
+                isLink = false;
             }
-            if(link){
+            if(isLink){
                 current = markdown.substring(openParen + 1, closeParen);
                 if (current.indexOf(" ") == -1){// checking if link is with spaces
                     toReturn.add(markdown.substring(openParen + 1, closeParen));
@@ -41,7 +41,7 @@ public class MarkdownParse {
             else{
                 currentIndex++;
             }
-            link = true;           
+            isLink = true;           
         }    
         return toReturn;
     }
